@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/url"
 	"os"
-	"regexp"
 	"strings"
 	"time"
 
@@ -135,24 +134,10 @@ func dataCollectorRunStart(nodeName string, orgName string, runUUID uuid.UUID, n
 func dataCollectorRunStop(node chef.Node, nodeName string, orgName string, runUUID uuid.UUID, nodeUUID uuid.UUID, startTime time.Time, endTime time.Time, config chefLoadConfig) error {
 
 	// Expand our run_list
-	expandedRunList := make([]map[string]interface{}, 0, len(config.RunList))
-	runListRegExp, _ := regexp.Compile("(\\w+)\\[(.+)\\]")
-	var nullString *string
-
-	for idx, runListItem := range config.RunList {
-		matches := runListRegExp.FindStringSubmatch(runListItem)
-		expandedRunListItem := map[string]interface{}{
-			"type":    matches[1],
-			"name":    matches[2],
-			"version": nullString,
-			"skipped": false,
-		}
-		expandedRunList[idx] = expandedRunListItem
-	}
 
 	expandedRunListMap := map[string]interface{}{
 		"id":       "_default",
-		"run_list": expandedRunList,
+		"run_list": "dummy_entry",
 	}
 
 	msgBody := map[string]interface{}{
